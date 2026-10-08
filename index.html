@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Watch Party</title>
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 * {
     box-sizing: border-box;
@@ -675,7 +675,14 @@ input {
 
 
 <script>
+const SUPABASE_URL = "https://yktqgjgdstlbzzohyell.supabase.co";
 
+const SUPABASE_KEY = "YOUR_PUBLISHABLE_KEY_HERE";
+
+const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
 let playing = false;
 
 function openParty() {
