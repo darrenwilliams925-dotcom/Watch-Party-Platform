@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Watch Party</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #07090d;
+    color: white;
+}
+
+header {
+    height: 70px;
+    background: #090b10;
+    border-bottom: 1px solid #20242d;
+    display: flex;
+    align-items: center;
+    padding: 0 25px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: 900;
+    letter-spacing: -1px;
+}
+
+.logo span {
+    color: #7c5cff;
+}
+
+nav {
+    display: flex;
+    gap: 25px;
+    margin-left: 45px;
+}
+
+nav a {
+    color: #aaa;
+    text-decoration: none;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+nav a:hover {
+    color: white;
+}
+
+.profile {
+    margin-left: auto;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: linear-gradient(135deg,#7c5cff,#00d4ff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.hero {
+    min-height: 470px;
+    padding: 80px 7%;
+    display: flex;
+    align-items: center;
+    background:
+        linear-gradient(90deg,#07090d 5%,rgba(7,9,13,.85) 45%,rgba(7,9,13,.2)),
+        radial-gradient(circle at 75% 40%,#38257a,#10131c 55%);
+}
+
+.hero-content {
+    max-width: 600px;
+}
+
+.badge {
+    display: inline-block;
+    background: #7c5cff;
+    padding: 7px 13px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 18px;
+}
+
+.hero h1 {
+    font-size: clamp(42px,7vw,75px);
+    line-height: .95;
+    margin-bottom: 20px;
+}
+
+.hero p {
+    color: #b9bdc8;
+    font-size: 17px;
+    line-height: 1.6;
+    margin-bottom: 28px;
+}
+
+.buttons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+button {
+    border: 0;
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 8px;
+    padding: 13px 21px;
+    font-size: 14px;
+}
+
+.primary {
+    background: #7c5cff;
+    color: white;
+}
+
+.secondary {
+    background: #20242d;
+    color: white;
+}
+
+.primary:hover {
+    background: #6847ed;
+}
+
+section {
+    padding: 35px 7%;
+}
+
+.section-title {
+    font-size: 23px;
+    margin-bottom: 20px;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 18px;
+}
+
+.card {
+    background: #10131a;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #1d222c;
+    transition: .2s;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    border-color: #7c5cff;
+}
+
+.poster {
+    height: 220px;
+    display: flex;
+    align-items: flex-end;
+    padding: 16px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.poster.one {
+    background: linear-gradient(135deg,#27145f,#ec4899);
+}
+
+.poster.two {
+    background: linear-gradient(135deg,#003b46,#00a6a6);
+}
+
+.poster.three {
+    background: linear-gradient(135deg,#3b1600,#e76f00);
+}
+
+.poster.four {
+    background: linear-gradient(135deg,#111,#555);
+}
+
+.card-info {
+    padding: 14px;
+}
+
+.card-info h3 {
+    margin-bottom: 6px;
+}
+
+.card-info p {
+    color: #8f95a3;
+    font-size: 12px;
+}
+
+.party-section {
+    background: #0b0e14;
+}
+
+.party-banner {
+    background: linear-gradient(100deg,#181229,#111a2a);
+    border: 1px solid #282d39;
+    border-radius: 15px;
+    padding: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.party-banner h2 {
+    font-size: 27px;
+    margin-bottom: 8px;
+}
+
+.party-banner p {
+    color: #9da3b1;
+}
+
+.party-list {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 15px;
+}
+
+.party {
+    background: #11151d;
+    padding: 18px;
+    border-radius: 12px;
+    border: 1px solid #242a35;
+}
+
+.live {
+    color: #ff4757;
+    font-size: 11px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.party h3 {
+    margin-bottom: 8px;
+}
+
+.party p {
+    color: #8f95a3;
+    font-size: 13px;
+}
+
+footer {
+    padding: 40px 7%;
+    color: #626875;
+    border-top: 1px solid #20242d;
+    text-align: center;
+}
+
+/* WATCH PARTY MODAL */
+
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.82);
+    z-index: 500;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-box {
+    background: #11151d;
+    border: 1px solid #303644;
+    width: 100%;
+    max-width: 500px;
+    border-radius: 15px;
+    padding: 25px;
+}
+
+.modal-box h2 {
+    margin-bottom: 20px;
+}
+
+input {
+    width: 100%;
+    background: #080a0f;
+    color: white;
+    border: 1px solid #303644;
+    padding: 14px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.close {
+    float: right;
+    background: transparent;
+    color: #aaa;
+    font-size: 20px;
+    padding: 0;
+}
+
+.room {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #05070a;
+    z-index: 600;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.room.active {
+    display: block;
+}
+
+.room-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.video {
+    background: #000;
+    height: 55vh;
+    min-height: 280px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.play {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: #7c5cff;
+    color: white;
+    font-size: 25px;
+}
+
+.controls {
+    background: #10131a;
+    padding: 15px;
+    border-radius: 0 0 12px 12px;
+}
+
+.chat {
+    margin-top: 20px;
+    background: #10131a;
+    border-radius: 12px;
+    padding: 18px;
+}
+
+.chat-messages {
+    height: 150px;
+    overflow-y: auto;
+    margin: 15px 0;
+}
+
+.message {
+    margin-bottom: 10px;
+    color: #c7cad1;
+}
+
+.message b {
+    color: #7c5cff;
+}
+
+.chat-row {
+    display: flex;
+    gap: 8px;
+}
+
+.chat-row input {
+    margin: 0;
+}
+
+@media(max-width:800px) {
+    nav {
+        display: none;
+    }
+
+    .cards {
+        grid-template-columns: repeat(2,1fr);
+    }
+
+    .party-list {
+        grid-template-columns: 1fr;
+    }
+
+    .party-banner {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .hero {
+        min-height: 500px;
+    }
+}
+
+@media(max-width:500px) {
+    header {
+        padding: 0 16px;
+    }
+
+    section {
+        padding: 28px 16px;
+    }
+
+    .cards {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .poster {
+        height: 170px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">WATCH<span>PARTY</span></div>
+
+    <nav>
+        <a>Home</a>
+        <a>Movies</a>
+        <a>Shows</a>
+        <a>Trending</a>
+        <a>Live</a>
+    </nav>
+
+    <div class="profile">DW</div>
+</header>
+
+<main>
+
+<section class="hero">
+    <div class="hero-content">
+        <div class="badge">THE FUTURE OF STREAMING</div>
+
+        <h1>Watch Together.<br>Anywhere.</h1>
+
+        <p>
+            Discover movies, shows, creators and live entertainment.
+            Then invite your friends and experience it together in real time.
+        </p>
+
+        <div class="buttons">
+            <button class="primary" onclick="openParty()">
+                🍿 Start a Watch Party
+            </button>
+
+            <button class="secondary" onclick="scrollToParties()">
+                Explore Parties
+            </button>
+        </div>
+    </div>
+</section>
+
+<section>
+    <h2 class="section-title">🔥 Trending Now</h2>
+
+    <div class="cards">
+
+        <div class="card">
+            <div class="poster one">THE LAST SIGNAL</div>
+            <div class="card-info">
+                <h3>The Last Signal</h3>
+                <p>Thriller • 2026</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="poster two">DEEP BLUE</div>
+            <div class="card-info">
+                <h3>Deep Blue</h3>
+                <p>Drama • 2026</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="poster three">MIDNIGHT RUN</div>
+            <div class="card-info">
+                <h3>Midnight Run</h3>
+                <p>Action • 2026</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="poster four">AFTER DARK</div>
+            <div class="card-info">
+                <h3>After Dark</h3>
+                <p>Horror • 2026</p>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<section class="party-section" id="parties">
+
+    <div class="party-banner">
+
+        <div>
+            <h2>🍿 Watch Party</h2>
+            <p>
+                Don't watch alone. Create a room and bring your people.
+            </p>
+        </div>
+
+        <button class="primary" onclick="openParty()">
+            Create Party
+        </button>
+
+    </div>
+
+    <div class="party-list">
+
+        <div class="party">
+            <div class="live">● LIVE NOW</div>
+            <h3>Friday Movie Night</h3>
+            <p>1,284 people watching</p>
+        </div>
+
+        <div class="party">
+            <div class="live">● LIVE NOW</div>
+            <h3>Horror Night 👻</h3>
+            <p>642 people watching</p>
+        </div>
+
+        <div class="party">
+            <div class="live">● LIVE NOW</div>
+            <h3>Anime After Dark</h3>
+            <p>2,031 people watching</p>
+        </div>
+
+    </div>
+
+</section>
+
+</main>
+
+<footer>
+    © 2026 Watch Party — The future of social entertainment.
+</footer>
+
+
+<!-- CREATE PARTY -->
+
+<div class="modal" id="partyModal">
+
+    <div class="modal-box">
+
+        <button class="close" onclick="closeParty()">✕</button>
+
+        <h2>Create Your Watch Party</h2>
+
+        <input
+            id="partyName"
+            placeholder="Party name"
+            value="Friday Movie Night"
+        >
+
+        <input
+            id="movieName"
+            placeholder="What are you watching?"
+            value="The Last Signal"
+        >
+
+        <button class="primary" onclick="createParty()">
+            Create Watch Party
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- WATCH ROOM -->
+
+<div class="room" id="watchRoom">
+
+    <div class="room-top">
+
+        <div>
+            <h2 id="roomTitle">Friday Movie Night</h2>
+            <p style="color:#858b98">
+                🍿 Watch Party • <span id="viewerCount">1</span> viewer
+            </p>
+        </div>
+
+        <button class="secondary" onclick="closeRoom()">
+            Leave Party
+        </button>
+
+    </div>
+
+    <div class="video">
+
+        <button class="play" onclick="togglePlay()" id="playButton">
+            ▶
+        </button>
+
+    </div>
+
+    <div class="controls">
+
+        <button class="secondary" onclick="togglePlay()">
+            Play / Pause
+        </button>
+
+        <button class="secondary" onclick="sendReaction('❤️')">
+            ❤️
+        </button>
+
+        <button class="secondary" onclick="sendReaction('😂')">
+            😂
+        </button>
+
+        <button class="secondary" onclick="sendReaction('🔥')">
+            🔥
+        </button>
+
+    </div>
+
+    <div class="chat">
+
+        <h3>💬 Party Chat</h3>
+
+        <div class="chat-messages" id="messages">
+
+            <div class="message">
+                <b>System:</b> Welcome to the Watch Party!
+            </div>
+
+            <div class="message">
+                <b>Alex:</b> Who's ready? 🔥
+            </div>
+
+        </div>
+
+        <div class="chat-row">
+
+            <input
+                id="chatInput"
+                placeholder="Say something..."
+                onkeydown="handleChat(event)"
+            >
+
+            <button class="primary" onclick="sendChat()">
+                Send
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+let playing = false;
+
+function openParty() {
+    document.getElementById("partyModal").classList.add("active");
+}
+
+function closeParty() {
+    document.getElementById("partyModal").classList.remove("active");
+}
+
+function createParty() {
+
+    const partyName =
+        document.getElementById("partyName").value ||
+        "My Watch Party";
+
+    const movie =
+        document.getElementById("movieName").value ||
+        "Movie Night";
+
+    document.getElementById("roomTitle").innerText = partyName;
+
+    closeParty();
+
+    document.getElementById("watchRoom").classList.add("active");
+
+    addMessage("System", "You started a party for " + movie + " 🎬");
+}
+
+function closeRoom() {
+    document.getElementById("watchRoom").classList.remove("active");
+}
+
+function togglePlay() {
+
+    playing = !playing;
+
+    document.getElementById("playButton").innerText =
+        playing ? "❚❚" : "▶";
+
+    addMessage(
+        "System",
+        playing ? "Playback started ▶" : "Playback paused ⏸"
+    );
+}
+
+function sendReaction(reaction) {
+    addMessage("You", reaction);
+}
+
+function sendChat() {
+
+    const input = document.getElementById("chatInput");
+
+    const message = input.value.trim();
+
+    if (!message) return;
+
+    addMessage("You", message);
+
+    input.value = "";
+}
+
+function handleChat(event) {
+
+    if (event.key === "Enter") {
+        sendChat();
+    }
+}
+
+function addMessage(user, message) {
+
+    const container =
+        document.getElementById("messages");
+
+    const div = document.createElement("div");
+
+    div.className = "message";
+
+    div.innerHTML =
+        "<b>" + user + ":</b> " + message;
+
+    container.appendChild(div);
+
+    container.scrollTop =
+        container.scrollHeight;
+}
+
+function scrollToParties() {
+
+    document.getElementById("parties")
+        .scrollIntoView({
+            behavior: "smooth"
+        });
+}
+
+</script>
+
+</body>
+</html>
