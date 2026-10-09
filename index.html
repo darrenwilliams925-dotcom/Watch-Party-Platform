@@ -685,6 +685,22 @@ const supabaseClient = window.supabase.createClient(
 );
 let playing = false;
 
+let currentPartyId = null;
+let currentPartyCode = null;
+let partyChannel = null;
+let currentUserId = localStorage.getItem("wp_user_id");
+
+if (!currentUserId) {
+  currentUserId = crypto.randomUUID();
+  localStorage.setItem("wp_user_id", currentUserId);
+}
+
+const displayName =
+  localStorage.getItem("wp_display_name") ||
+  prompt("Choose your watch-party name") ||
+  "Guest";
+localStorage.setItem("wp_display_name", displayName);
+
 function openParty() {
     document.getElementById("partyModal").classList.add("active");
 }
