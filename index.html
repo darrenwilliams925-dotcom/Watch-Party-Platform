@@ -709,23 +709,117 @@ function closeParty() {
     document.getElementById("partyModal").classList.remove("active");
 }
 
-function createParty() {
 
-    const partyName =
-        document.getElementById("partyName").value ||
-        "My Watch Party";
+async function createParty() {
+  const partyName =
+    document.getElementById("partyName").value.trim() ||
+    "My Watch Party";
 
-    const movie =
-        document.getElementById("movieName").value ||
-        "Movie Night";
+  const movie =
+    document.getElementById("movieName").value.trim() ||
+    "Movie Night";
 
-    document.getElementById("roomTitle").innerText = partyName;
+  const { data, error } = await supabaseClient
+    .from("wp_parties")
+    .insert({
+      name: partyName + " — " + movie,
+      host_id: currentUserId,
+      is_public: true
+    })
+    .select()
+    .single();
 
-    closeParty();
+  if (error) {
+    alert("Could not create party: " + error.message);
+    return;
+  }
 
-    document.getElementById("watchRoom").classList.add("active");
+  currentPartyId = data.id;
+  currentPartyCode = data.code;
 
-    addMessage("System", "You started a party for " + movie + " 🎬");
+  document.getElementById("roomTitle").textContent = data.name;
+  closeParty();
+
+  document.getElementById("watchRoom").classList.add("active");
+
+  alert("Your party code is: " + currentPartyCode);
+
+  await joinCurrentParty();
+}
+
+async function joinCurrentParty() {
+  if (!currentPartyId) return;
+
+  const { error } = await supabaseClient
+    .from("wp_participants")
+    .upsert({
+      party_id: currentPartyId,
+      user_id: currentUserId,
+      display_name: displayName
+    }, { onConflict: "party_id,user_id" });
+
+  if (error) {
+    alert("Could not join party: " + error.message);
+    return;
+  }
+
+  if (partyChannel) {
+    await supabaseClient.removeChannel(partyChannel);
+  }
+
+  partyChannel = supabaseClient
+    .channel("party-" + currentPartyId)
+    .on("postgres_changes", {
+      event: "*",
+      schema: "public",
+      table: "wp_participants",
+      filter: "party_id=eq." + currentPartyId
+    }, refreshPartyPeople)
+    .on("postgres_changes", {
+      event: "INSERT",
+      schema: "public",
+      table: "wp_messages",
+      filter: "party_id=eq." + currentPartyId
+    }, event => {
+      addMessage(event.new.display_name, event.new.content);
+    })
+    .subscribe();
+
+  await refreshPartyPeople();
+}
+
+async function refreshPartyPeople() {
+  if (!currentPartyId) return;
+
+  const { data, error } = await supabaseClient
+    .from("wp_participants")
+    .select("display_name")
+    .eq("party_id", currentPartyId);
+
+  if (error) {
+    console.error(error.message);
+    return;
+  }
+
+  let list = document.getElementById("partyPeople");
+
+  if (!list) {
+    list = document.createElement("div");
+    list.id = "partyPeople";
+    document.getElementById("watchRoom").prepend(list);
+  }
+
+  list.replaceChildren();
+
+  const heading = document.createElement("h3");
+  heading.textContent = "People watching (" + data.length + ")";
+  list.appendChild(heading);
+
+  data.forEach(person => {
+    const item = document.createElement("p");
+    item.textContent = "👤 " + person.display_name;
+    list.appendChild(item);
+  });
 }
 
 function closeRoom() {
